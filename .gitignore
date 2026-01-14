@@ -1,0 +1,73 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code
+.vscode/
+
+# Flutter / Dart / Pub
+.dart_tool/
+.packages
+.pub/
+.pub-cache/
+.flutter-plugins
+.flutter-plugins-dependencies
+.build/
+coverage/
+lib/generated_plugin_registrant.dart
+
+# Flutter build outputs
+build/
+
+# Android
+android/.gradle/
+android/local.properties
+android/**/key.properties
+android/**/keystore.jks
+*.jks
+
+# iOS / macOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/ephemeral/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Runner.xcworkspace
+ios/Runner/GeneratedPluginRegistrant.*
+ios/Runner/*.xcconfig
+
+macos/Pods/
+macos/Flutter/ephemeral/
+
+# Web
+web/.dart_tool/
+web/build/
+
+# Windows
+windows/flutter/ephemeral/
+
+# Linux
+linux/flutter/ephemeral/
+
+# Firebase (optional – remove if you want to commit these)
+google-services.json
+GoogleService-Info.plist
+
+# Environment variables
+.env
+.env.*
