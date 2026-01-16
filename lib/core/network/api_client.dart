@@ -1,5 +1,6 @@
 import 'package:clean_architecture_with_bloc/core/api_urls/api_urls.dart';
 import 'package:clean_architecture_with_bloc/core/error/api_exceptions.dart';
+import 'package:clean_architecture_with_bloc/core/storage/secure_auth_storage.dart';
 import 'package:dio/dio.dart';
 
 class ApiClient {
@@ -33,9 +34,19 @@ class ApiClient {
   Future<dynamic> getApi({
     required String path,
     Map<String, dynamic>? queryParams,
+    bool tokenNeeded = false,
   }) async {
     try {
-      final response = await dio.get(path, queryParameters: queryParams);
+      String? token;
+      if (tokenNeeded) {
+        final storage = SecureAuthStorage();
+        token = await storage.getToken();
+      }
+      final response = await dio.get(
+        path,
+        queryParameters: queryParams,
+        options: Options(headers: {'Authorization': "Bearer $token"}),
+      );
       final responseData = getResponseData(response);
       return responseData;
     } on DioException catch (e) {
