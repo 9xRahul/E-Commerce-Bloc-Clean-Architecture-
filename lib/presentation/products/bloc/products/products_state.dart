@@ -1,16 +1,35 @@
 part of 'products_bloc.dart';
 
 @immutable
-sealed class ProductsState {}
+sealed class ProductsState {
+  final int imageIndex;
 
-final class ProductsInitial extends ProductsState {}
+  ProductsState({this.imageIndex = 0});
+}
 
-final class ProductsLoading extends ProductsState {}
+class ProductsInitial extends ProductsState {
+  ProductsInitial() : super(imageIndex: 0);
+}
 
-final class ProductsLoadSuccess extends ProductsState {
+class ProductsLoading extends ProductsState {
+  ProductsLoading({int imageIndex = 0}) : super(imageIndex: imageIndex);
+}
+
+class ProductsLoadSuccess extends ProductsState {
   final List<ProductEntity> products;
 
-  ProductsLoadSuccess({required this.products});
+  ProductsLoadSuccess({required this.products, int imageIndex = 0})
+    : super(imageIndex: imageIndex);
+
+  ProductsLoadSuccess copyWith({
+    List<ProductEntity>? products,
+    int? imageIndex,
+  }) {
+    return ProductsLoadSuccess(
+      products: products ?? this.products,
+      imageIndex: imageIndex ?? this.imageIndex,
+    );
+  }
 }
 
 final class ProductLoadingError extends ProductsState {
@@ -19,4 +38,3 @@ final class ProductLoadingError extends ProductsState {
 
   ProductLoadingError({required this.statusCode, required this.message});
 }
-

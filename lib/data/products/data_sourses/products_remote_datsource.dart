@@ -1,6 +1,6 @@
 import 'package:clean_architecture_with_bloc/core/api_urls/api_urls.dart';
 import 'package:clean_architecture_with_bloc/core/network/api_client.dart';
-import 'package:clean_architecture_with_bloc/data/products/models/category/category_model.dart';
+
 import 'package:clean_architecture_with_bloc/data/products/models/product/products_model.dart';
 
 class ProductRemoteDataSource {

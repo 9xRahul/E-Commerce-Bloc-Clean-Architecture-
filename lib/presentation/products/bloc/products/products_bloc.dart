@@ -20,6 +20,7 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
     on<FetchProducts>(_fetchProdcus);
     on<ClearProductsList>(_clearCachedProducts);
     on<SearchProducts>(_onSearchProducts);
+    on<ProductImageChanged>(_onImageChanged);
   }
 
   FutureOr<void> _fetchProdcus(
@@ -71,6 +72,16 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
       emit(ProductsLoadSuccess(products: prodcuts));
     } catch (e) {
       emit(ProductLoadingError(message: e.toString(), statusCode: 0));
+    }
+  }
+
+  FutureOr<void> _onImageChanged(
+    ProductImageChanged event,
+    Emitter<ProductsState> emit,
+  ) {
+    final current = state;
+    if (current is ProductsLoadSuccess) {
+      emit(current.copyWith(imageIndex: event.index));
     }
   }
 }

@@ -16,3 +16,8 @@ class SearchProducts extends ProductsEvent {
 
   SearchProducts(this.query);
 }
+
+class ProductImageChanged extends ProductsEvent {
+  final int index;
+  ProductImageChanged(this.index);
+}

@@ -1,32 +1,131 @@
 import 'package:clean_architecture_with_bloc/domain/products/entities/product/product_entity.dart';
+import 'package:clean_architecture_with_bloc/presentation/products/bloc/products/products_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ProductDetailsScreen extends StatelessWidget {
+class ProductDetailsScreen extends StatefulWidget {
   final ProductEntity product;
 
   const ProductDetailsScreen({super.key, required this.product});
 
   @override
+  State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
+}
+
+class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
+  final PageController _pageController = PageController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    context.read<ProductsBloc>().add(ProductImageChanged(0));
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final product = widget.product;
+
     return Scaffold(
       appBar: AppBar(title: Text(product.title)),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image slider
-            SizedBox(
-              height: 300,
-              child: PageView.builder(
-                itemCount: product.images?.length ?? 1,
-                itemBuilder: (_, index) {
-                  final image = product.images?.isNotEmpty == true
-                      ? product.images![index]
-                      : product.thumbnail;
+            // Image slider + buttons
+            BlocBuilder<ProductsBloc, ProductsState>(
+              builder: (context, state) {
+                final images = product.images?.isNotEmpty == true
+                    ? product.images!
+                    : [product.thumbnail];
 
-                  return Image.network(image, fit: BoxFit.cover);
-                },
-              ),
+                return Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      height: 300,
+                      width: double.infinity,
+                      child: PageView.builder(
+                        controller: _pageController,
+                        itemCount: images.length,
+                        onPageChanged: (index) {
+                          context.read<ProductsBloc>().add(
+                            ProductImageChanged(index),
+                          );
+                        },
+                        itemBuilder: (_, index) {
+                          return Image.network(
+                            images[index],
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          );
+                        },
+                      ),
+                    ),
+
+                    // Previous
+                    Positioned(
+                      left: 10,
+                      child: state.imageIndex != 0
+                          ? IconButton(
+                              icon: const Icon(
+                                Icons.arrow_back_ios,
+                                color: Colors.black,
+                              ),
+                              onPressed: state.imageIndex > 0
+                                  ? () {
+                                      final newIndex = state.imageIndex - 1;
+
+                                      _pageController.animateToPage(
+                                        newIndex,
+                                        duration: const Duration(
+                                          milliseconds: 300,
+                                        ),
+                                        curve: Curves.easeInOut,
+                                      );
+
+                                      context.read<ProductsBloc>().add(
+                                        ProductImageChanged(newIndex),
+                                      );
+                                    }
+                                  : null,
+                            )
+                          : SizedBox(),
+                    ),
+
+                    // Next
+                    Positioned(
+                      right: 10,
+
+                      child: state.imageIndex < images.length - 1
+                          ? IconButton(
+                              icon: const Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.black,
+                              ),
+                              onPressed: state.imageIndex < images.length - 1
+                                  ? () {
+                                      final newIndex = state.imageIndex + 1;
+
+                                      _pageController.animateToPage(
+                                        newIndex,
+                                        duration: const Duration(
+                                          milliseconds: 300,
+                                        ),
+                                        curve: Curves.easeInOut,
+                                      );
+
+                                      context.read<ProductsBloc>().add(
+                                        ProductImageChanged(newIndex),
+                                      );
+                                    }
+                                  : null,
+                            )
+                          : SizedBox(),
+                    ),
+                  ],
+                );
+              },
             ),
 
             const SizedBox(height: 16),
@@ -36,9 +135,8 @@ class ProductDetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _titlePriceSection(),
-
-                  _ratingStockSection(),
+                  _titlePriceSection(product),
+                  _ratingStockSection(product),
 
                   _sectionTitle("Description"),
                   Text(product.description),
@@ -95,7 +193,7 @@ class ProductDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _titlePriceSection() {
+  Widget _titlePriceSection(ProductEntity product) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -126,7 +224,7 @@ class ProductDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _ratingStockSection() {
+  Widget _ratingStockSection(ProductEntity product) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
