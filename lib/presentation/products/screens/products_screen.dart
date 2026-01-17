@@ -45,9 +45,31 @@ class _ProductScreenState extends State<ProductScreen> {
                     return ListView.builder(
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(horizontal: 8),
-                      itemCount: state.categories.length,
+                      itemCount: state.categories.length + 1,
                       itemBuilder: (context, index) {
-                        final category = state.categories[index];
+                       
+                        if (index == 0) {
+                          final isSelected = state.selectedCategory == "";
+
+                          return CategoryChip(
+                            name: "All",
+                            isSelected: isSelected,
+                            onTap: () {
+                              context.read<CategoryBloc>().add(
+                                SelectCategoryEvent(""),
+                              );
+                              print(
+                                "Selected category = ${state.selectedCategory}",
+                              );
+
+                              context.read<ProductsBloc>().add(
+                                FetchProducts(category: "all"),
+                              );
+                            },
+                          );
+                        }
+
+                        final category = state.categories[index - 1];
                         final isSelected =
                             state.selectedCategory == category.name;
 
@@ -55,8 +77,6 @@ class _ProductScreenState extends State<ProductScreen> {
                           name: category.name,
                           isSelected: isSelected,
                           onTap: () {
-                            // update category state
-
                             context.read<CategoryBloc>().add(
                               SelectCategoryEvent(category.name),
                             );

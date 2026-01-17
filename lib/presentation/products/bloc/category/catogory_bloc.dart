@@ -31,7 +31,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       final categories = await getCategories();
       _cache = categories;
 
-      emit(CategoryLoaded(categories: categories));
+      emit(CategoryLoaded(categories: categories, selectedCategory: ""));
     } catch (e) {
       emit(CategoryError("Failed to load categories"));
     }
